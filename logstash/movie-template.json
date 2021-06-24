@@ -1,0 +1,67 @@
+{
+    "template": "movies*",
+    "order": 0,
+    "settings": {
+      "index.max_result_window": "50000",
+      "analysis": {
+        "filter": {
+          "word_joiner": {
+            "type": "word_delimiter",
+            "generate_word_parts": true,
+            "generate_number_parts": true,
+            "split_on_numerics": false,
+            "split_on_case_change": false,
+            "preserve_original": true,
+            "catenate_all": true,
+            "catenate_numbers": false,
+            "catenate_words": false
+          },
+          "autocomplete": {
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 18,
+            "token_chars": [
+              "letter",
+              "digit"
+            ]
+          }
+        },
+        "analyzer": {
+          "title_analyzer": {
+            "type": "custom",
+            "tokenizer": "whitespace",
+            "filter": [
+              "lowercase",
+              "word_joiner",
+              "autocomplete"
+            ]
+          },
+          "title_search_analyzer": {
+            "type": "custom",
+            "tokenizer": "whitespace",
+            "filter": [
+              "lowercase",
+              "word_joiner"
+            ]
+          }
+        }
+      }
+    },
+    "mappings": {
+      "properties": {
+        "title": {
+          "type": "text",
+          "analyzer": "title_analyzer",
+          "search_analyzer": "title_search_analyzer",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            }
+          }
+        },
+        "release_date": {
+          "type": "date"
+        }
+      }
+    }
+  }

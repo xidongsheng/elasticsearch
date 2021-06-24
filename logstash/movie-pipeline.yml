@@ -1,0 +1,32 @@
+input {
+  file {
+    path => ["/Users/dxi/data/movies_metadata.csv"]  
+    start_position => "beginning"
+  }
+}
+
+filter {
+  csv {
+    separator => ","
+    columns => ["id", "title"]
+    skip_header => "true"
+  }
+  mutate {
+    copy => {"id" => "[@metadata][_id]"}
+    remove_field => ["@version"]
+  }
+}
+
+output {
+  elasticsearch {
+      index => "movies_metadata"
+      document_id => "%{[@metadata][_id]}"
+      doc_as_upsert => true
+      action => "update"
+      hosts => "http://localhost:9200"
+      manage_template => true
+      template => "/Users/dxi/Documents/projects/elasticsearch/logstash/movie-template.json"
+      template_name => "movie-template"
+      template_overwrite => true
+  }
+}
